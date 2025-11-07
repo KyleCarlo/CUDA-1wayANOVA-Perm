@@ -52,6 +52,47 @@ int genPermutation(int a[], int n)
 //     }
 // }
 
+double OneWayAnova(size_t n, int k, size_t *group_n, int *group, double *feature){
+    /* AVERAGE & GROUP AVERAGE */
+    double group_ave[k];
+    double average = 0.0;
+
+    for (int i = 0; i < n; i++) {
+        group_ave[group[i]] += feature[i];
+        average += feature[i];
+    }
+
+    average /= n;
+
+    for (int i = 0; i < k; i++) {
+        group_ave[i] /= group_n[i];
+
+        // printf("G Ave: %lf", group_ave[i]);
+    }
+
+    /* SUM OF SQUARED ERROR (SSE) */
+    double SSE = 0.0;
+    double temp;
+    for (int i = 0; i < n; i++) {
+        temp = feature[i] - group_ave[group[i]];
+        SSE += temp*temp;
+    }   
+    printf("%lf\n", SSE);
+
+    /* SSR (SUM OF SQUARED RESIDUALS) */
+    double SSR = 0.0;
+    for (int i = 0; i < k; i++) {
+        temp = group_ave[i] - average;
+        SSR += group_n[i] * (temp * temp);
+    }
+
+    /* F-statistic */
+    double MStreatment = (SSE+SSR)/(k-1);
+    double MSerror = SSE/(n-k);
+
+    return MStreatment/MSerror;
+}
+
 int main() {
     size_t n;   // number of rows
     int k;      // number of groups
@@ -64,7 +105,7 @@ int main() {
 
     double *feature = malloc(n * sizeof(double));
     int *group = malloc(n * sizeof(int));
-    size_t *group_duplicates = calloc(k, sizeof(size_t));
+    size_t *group_n = calloc(k, sizeof(size_t));
 
     /* READ THE DATA */
     FILE *fp = fopen("dataset.csv", "r");
@@ -93,7 +134,7 @@ int main() {
                     perror("Error group count");
                     return 1;
                 } 
-                group_duplicates[group[i]] += 1;
+                group_n[group[i]] += 1;
             }
             token = strtok(NULL, ",");
             j++;
@@ -103,7 +144,7 @@ int main() {
     fclose(fp);
 
     /* PERMUTATE */
-    long double n_perms = getCountPerm(n, group_duplicates, k);
+    long double n_perms = getCountPerm(n, group_n, k);
     int *group_perms = malloc(n * n_perms * sizeof(int));
 
     for (i = 0; i <= n_perms; i++){
@@ -124,6 +165,9 @@ int main() {
         }
         printf("\n");
     }
+
+    /* ONE WAY ANOVA */
+    printf("F=%lf\ns", OneWayAnova(n, k, group_n, group, feature));
     free(feature);
     free(group);
 
