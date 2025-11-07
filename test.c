@@ -41,7 +41,7 @@ int genPermutation(int a[], int n)
   return 1;
 }
 
-// FISCHER YATE ALGO
+// Fisher–Yates shuffle
 // PERMUTATION IF WE WANT MONTE CARLO
 // void randomPermutation(int *array, size_t n) {
 //     for (size_t i = n - 1; i > 0; i--) {
