@@ -63,6 +63,7 @@ double OneWayAnova(size_t n, int k, size_t *group_n, int *group, double *feature
     }
 
     average /= n;
+    printf("AVE: %lf\n", average);
 
     for (int i = 0; i < k; i++) {
         group_ave[i] /= group_n[i];
@@ -77,7 +78,7 @@ double OneWayAnova(size_t n, int k, size_t *group_n, int *group, double *feature
         temp = feature[i] - group_ave[group[i]];
         SSE += temp*temp;
     }   
-    printf("%lf\n", SSE);
+    printf("SSE: %lf\n", SSE);
 
     /* SSR (SUM OF SQUARED RESIDUALS) */
     double SSR = 0.0;
@@ -85,10 +86,13 @@ double OneWayAnova(size_t n, int k, size_t *group_n, int *group, double *feature
         temp = group_ave[i] - average;
         SSR += group_n[i] * (temp * temp);
     }
+    printf("SSR: %lf\n", SSR);
 
     /* F-statistic */
     double MStreatment = (SSE+SSR)/(k-1);
     double MSerror = SSE/(n-k);
+    printf("MStreatment: %lf\n", MStreatment);
+    printf("MSerror: %lf\n", MSerror);
 
     return MStreatment/MSerror;
 }
