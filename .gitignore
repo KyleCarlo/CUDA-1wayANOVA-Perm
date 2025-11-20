@@ -1,3 +1,5 @@
-.ipynb_checkpoints/
-.vscode/
-*.out
+*
+!*.ipynb
+!*.csv
+!*.c
+!*.cu
