@@ -104,11 +104,8 @@ Each thread performs:
    - $\mu_i$  
    - $SSE$  
    - $SSR$  
-5. Computation of:
-$$
-   F = \frac{SSR/(k-1)}{SSE/(N-k)}
-$$
-6. Writing of result to global memory
+   - $F$
+5. Writing of result to global memory
 
 ### CUDA Optimizations:
 - Unified memory  
