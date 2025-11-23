@@ -1,5 +1,4 @@
 *
 !*.ipynb
 !*.csv
-!*.c
-!*.cu
+!input.txt
