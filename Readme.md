@@ -71,7 +71,7 @@ The key idea:
 
 > **Each permutation becomes an independent GPU thread.**
 
-Instead of evaluating permutations inside a large for-loop, CUDA executes thousands of them in parallel.
+Instead of evaluating permutations inside a large for-loop, CUDA executes thousands of them in parallel utilizing the Single Instruction, Multiple Threads (SIMT) model to significantly accelerate permutation-based ANOVA computations.
 
 ---
 
