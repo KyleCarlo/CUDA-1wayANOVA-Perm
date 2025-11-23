@@ -105,9 +105,9 @@ Each thread performs:
    - $SSE$  
    - $SSR$  
 5. Computation of:
-   $$
+$$
    F = \frac{SSR/(k-1)}{SSE/(N-k)}
-   $$
+$$
 6. Writing of result to global memory
 
 ### CUDA Optimizations:
@@ -155,14 +155,15 @@ which yields **significant acceleration**.
 
 ---
 # 7. Results: <!--TODO-->
-## 7.Accuracy
-    . Sequential Execution (C)
+## 7.1. Accuracy
+### 7.1.1. Sequential Execution (C)
 1.  **Screenshot**
 
-## 7.2. Sequential Execution (C)
+### 7.1.2. Sequential Execution (C)
 1.  **Screenshot**
 
-## 7.3.  Comparative Table of Average Execution Time
+## 7.2.  Comparative Table of Average Execution Time
+<!--
     <table>
       <thead>
 
@@ -213,8 +214,9 @@ which yields **significant acceleration**.
       </tr>
       </tbody>
     </table>
+-->
 
-## 7.5. Correctness Check (C, CUDA)
+## 7.3. Correctness Check (C, CUDA)
 <!--
 1. **Correctness Check with size 2<sup>20</sup>**
 
