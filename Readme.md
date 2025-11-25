@@ -9,7 +9,11 @@
 ---
 
 # 1. Overview
+### Short Video Presentation:
+[![Video Presentation]](https://drive.google.com/file/d/1RZaUFX2rnrdtSechSJX45wcNOOSU2HSo/view?usp=sharing)
 
+
+### Description
 This project implements both ***exact*** and ***Monte Carlo permutation tests*** for the ***one-way ANOVA*** statistic, comparing:
 
 - ***Serial C implementation***
@@ -161,6 +165,7 @@ These steps do not benefit meaningfully from GPU parallelization.
 
 ## 4.1. Exact Permutation Runtime Results (Runs = 10)
 *Note:*
+- *For both C and CUDA implementations, the execution time reported includes generating the permutations and computing the $F$-statistic.*
 - *For all CUDA Implementations, CUDA Execution time = Average GPU Kernel Time + HtoD + DtoH*
 - *For CUDA Exact Permutation with Lexicographic Next Permutation Algorithm, we get the execution time (serial) of generating the permutations and add this with the CUDA Execution time of computing for $F$-statistic.*
 ### $k$ = 3
