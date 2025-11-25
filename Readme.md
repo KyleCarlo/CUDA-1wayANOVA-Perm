@@ -309,6 +309,7 @@ $$
    - Trying bold approaches such as trying to get exact permutation results may lead to roadblocks, particularly with resource limitations. But, it is okay to use other well-known approaches like the Monte Carlo model and just simply compare their capabilities
 
 # 6. Appendix (Screenshots of Execution Time Comparison)
+These are the screenshots of sample executions for both C and CUDA implementations based on the current `dataset.csv` file provided in the repository ($N=10, k=3$).
 ## 6.1. C Executions
 C Exact Execution
 ![C Exact](images/execution_screenshots/c_exact.png)
@@ -331,4 +332,3 @@ CUDA Exact Execution (Rank-based + Shared Memory)
 
 CUDA Monte Carlo Execution (Shared Memory)
 ![CUDA Monte Carlo Shared](images/execution_screenshots/cuda_shared_monte.png)
-
