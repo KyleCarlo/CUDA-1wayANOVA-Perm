@@ -10,7 +10,7 @@
 
 # 1. Overview
 ### Short Video Presentation:
-[![Video Presentation]](https://drive.google.com/file/d/1RZaUFX2rnrdtSechSJX45wcNOOSU2HSo/view?usp=sharing)
+[Video Presentation](https://drive.google.com/file/d/1RZaUFX2rnrdtSechSJX45wcNOOSU2HSo/view?usp=sharing)
 
 
 ### Description
