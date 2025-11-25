@@ -10,12 +10,25 @@
 
 # 1. Overview
 
-This project implements both **exact** and **Monte Carlo permutation tests** for the **one-way ANOVA** statistic, comparing:
+This project implements both ***exact*** and ***Monte Carlo permutation tests*** for the ***one-way ANOVA*** statistic, comparing:
 
-- **Serial C implementation**
-- **CUDA-accelerated GPU implementation (SIMT model)**
+- ***Serial C implementation***
+- ***CUDA-accelerated GPU implementation (SIMT model)***
 
 Permutation tests are widely used in fields such as neuroimaging, genomics, and experimental sciences, but become computationally expensive due to the factorial growth of possible permutations. This project benchmarks performance, evaluates memory limitations, and quantifies the accuracy of Monte Carlo approximations against exact permutation results.
+
+### **Inputs to Project**
+- Data matrix: $X = \{ x_{ij} \}$
+- Group labels: $g_1, g_2, \ldots, g_N$
+- Number of groups: $k$
+- Number of permutations: $P$
+
+### **Outputs**
+- Exact null distribution of $F$ test statistic 
+- $p$-value for the permutation test.
+- Performance metrics: runtimes (serial vs CUDA), speedup factors, GPU utilization.
+- Output accuracy: outputs are compared to the ground truth, and errors will be shown.
+
 
 ---
 
@@ -23,55 +36,53 @@ Permutation tests are widely used in fields such as neuroimaging, genomics, and 
 
 The sequential permutation test computes the ANOVA statistic for each permutation one at a time.
 
-## 2.1 Inputs
-- Data matrix: $X = \{ x_{ij} \}$
-- Group labels: $g_1, g_2, \ldots, g_N$
-- Number of groups: $k$
-- Number of permutations: $P$
-
----
-
-## 2.2 Steps in the Sequential Algorithm
-
 ### **Step 1 — Generate a permutation of labels**
-- Exact enumeration (lexicographic), or  
-- Monte Carlo (LCG + Fisher–Yates shuffle)
+3 ways:
+- Lexicographic Next Permutation (for Exact Permutation Test)
+    - This algorithm generates a permutation dependent from the previous permutation
+- LCG + Fisher–Yates shuffle (for Monte Carlo Method)
 
-### **Step 2 — Reassign labels according to the permutation**
-
-### **Step 3 — Compute group means**
+### **Step 2 — Compute group means**
 $$
 \mu_i = \frac{1}{n_i} \sum_{j=1}^{n_i} x_{ij}
 $$
 
-### **Step 4 — Compute within-group sum of squares**
+### **Step 3 — Compute within-group sum of squares**
 $$
 SSE = \sum_{i=1}^k \sum_{j=1}^{n_i} (x_{ij} - \mu_i)^2
 $$
 
-### **Step 5 — Compute between-group sum of squares**
+### **Step 4 — Compute between-group sum of squares**
 $$
 SSR = \sum_{i=1}^k n_i (\mu_i - \mu)^2
 $$
 
-### **Step 6 — Compute ANOVA statistic**
+### **Step 5 — Compute ANOVA statistic**
 $$
 F = \frac{SSR/(k-1)}{SSE/(N-k)}
 $$
 
-### **Step 7 — Repeat Steps 1–6 for all $P$ permutations**
+### **Step 6 — Repeat Steps 2–5 for all $P$ permutations**
 
-### **Step 8 — Compute final $p$-value**
+### **Step 7 — Compute final $p$-value**
 
 ---
 
 # 3. Parallel Algorithm (CUDA Implementation)
 
-The key idea:
+### What was parallelized?
+1. Creation of the permutations (Sequential Step 1)
+    - ***Rank-based permutation*** (for Exact Permutation Test)
+      - In contrast to Lexicographic Next, Rank-based is a parallelization method that allows the permutations to be independently created without relying on the previous permutation.
+      - This essentially makes one permutation a GPU thread which will be able to complete the next steps independently
+2. Looping across all Permutations (Sequential Step 6)
+    - Instead of evaluating permutations inside a large for-loop, CUDA executes thousands of them in parallel utilizing the Single Instruction, Multiple Threads (SIMT) model where each permutation is a thread.
 
-> **Each permutation becomes an independent GPU thread.**
+3. Calculation of $F$-Statistic (Sequential Steps 2-5)
+    - Within each thread/permutation, there is another thread that computes for the $F$-Statistic since it involves loops for the summations.
 
-Instead of evaluating permutations inside a large for-loop, CUDA executes thousands of them in parallel utilizing the Single Instruction, Multiple Threads (SIMT) model to significantly accelerate permutation-based ANOVA computations.
+### Key idea:
+> ***Each permutation becomes an independent GPU thread.***
 
 ---
 
@@ -81,14 +92,14 @@ Instead of evaluating permutations inside a large for-loop, CUDA executes thousa
 
 | Sequential Step | Parallel CUDA Version |
 |-----------------|------------------------|
-| Loop over all $P$ permutations | **Mapped to GPU threads** (1 thread = 1 permutation) |
-| Reassign labels | Done independently inside each thread |
+| Generate all $P$ permutations | ***Mapped to GPU threads*** (1 thread = 1 permutation) |
+| Loop over all $P$ permutations | Not needed (1 thread = 1 permutation) |
 | Compute $\mu_i$ | Each thread computes means for its permutation |
 | Compute $SSE$ | Thread-local loop inside kernel |
 | Compute $SSR$ | Thread-local loop inside kernel |
 | Compute $F$ | Each thread computes and stores its own result |
 
-These are the **core computational bottlenecks** and are ideal for parallelism because permutations are independent.
+These are the ***core computational bottlenecks*** and are ideal for parallelism because permutations are independent.
 
 ---
 
@@ -112,7 +123,7 @@ Each thread performs:
 - `cudaMemAdvise`  
 - `cudaMemPrefetchAsync`  
 - Grid-stride loops  
-- (Future) shared memory caching  
+- Shared memory caching  
 
 ---
 
@@ -136,7 +147,7 @@ $$
 \text{Cost} = P \times O(N)
 $$
 
-Because each permutation is **independent**:
+Because each permutation is ***independent***:
 
 - Ideal for data-parallel execution  
 - GPU can handle tens of thousands of permutations simultaneously  
@@ -148,16 +159,16 @@ $$
 O\left(\frac{P}{\text{threads}}\right)
 $$
 
-which yields **significant acceleration**.
+which yields ***significant acceleration***.
 
 ---
 # 7. Results: <!--TODO-->
 ## 7.1. Accuracy
 ### 7.1.1. Sequential Execution (C)
-1.  **Screenshot**
+1.  ***Screenshot***
 
 ### 7.1.2. Sequential Execution (C)
-1.  **Screenshot**
+1.  ***Screenshot***
 
 ## 7.2.  Comparative Table of Average Execution Time
 <!--
@@ -261,7 +272,7 @@ which yields **significant acceleration**.
         - $O(N!)$ memory scaling  
         - GPU thread count limits  
         - Extremely large permutation counts  
-        - Practical limit: **$N\leq15$**
+        - Practical limit: ***$N\leq15$***
 
 2. Solution: Monte Carlo Approximation
     - Monte Carlo sampling enables:
