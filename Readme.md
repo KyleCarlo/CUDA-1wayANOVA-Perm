@@ -74,7 +74,8 @@ $$
 1. Creation of the permutations (Sequential Step 1)
     - ***Rank-based permutation*** (for Exact Permutation Test)
       - Lexicographic Next was implemented in CUDA as well but proved to be a bottleneck since the creation of a permutation is dependent on a previous permutation. In this case, Lexicographic Next was executed by the CPU. The results of these were still noted below
-      - In contrast to Lexicographic Next, Rank-based is a parallelization method that allows the permutations to be independently created without relying on the previous permutation. This essentially makes one permutation a GPU thread which will be able to complete the next steps independently.  Rank-based permutation in itself has a higher time complexity than Lexicographic Next, but due to parallelization and the use of threads, it makes the overall program faster.
+      - In contrast to Lexicographic Next, Rank-based is a parallelization method that allows the permutations to be independently created without relying on the previous permutation. This essentially makes one permutation equivalent to a GPU thread that will be able to complete the next steps independently.
+      - Rank-based permutation in itself has a higher time complexity than Lexicographic Next, but due to parallelization and the use of threads, it makes the overall program faster.
 2. Looping across all Permutations (Sequential Step 6, which repeats Steps 2-5)
     - Instead of getting the $F$-statistic of each permutation inside a large for-loop, CUDA executes many of them in parallel utilizing the Single Instruction, Multiple Threads (SIMT) model. With this, each permutation is a thread that computes its own $F$-statistic.
 
@@ -90,7 +91,7 @@ $$
 | Compute $SSR$ | Compute $SSR$ for multiple permutations at a time |
 | Compute $F$ | Compute $F$ for multiple permutations at a time |
 
-These are the ***core computational bottlenecks*** in the sequential algorithm that are ideal for parallelism because computataions for each permutation are independent.
+These are the ***core computational bottlenecks*** in the sequential algorithm that are ideal for parallelism because computations for each permutation are independent.
 
 ---
 
